@@ -1,0 +1,3 @@
+[submodule "xformers"]
+	path = xformers
+	url = https://github.com/alexchesser/xformers.git
