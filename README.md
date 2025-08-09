@@ -17,8 +17,6 @@ The `xformers-devcontainer` exists to make contributing effortless, consistent, 
 
 **Our North Star:** A frictionless workspace that turns "setup" into "ship it."
 
-
-
 ## Quick Start
 
 Follow these steps to get up and running with a pre-built `xFormers` development container using cached layers from Docker Hub.
