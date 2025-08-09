@@ -50,6 +50,33 @@ Follow these steps to get up and running with a pre-built `xFormers` development
    The container will quickly link your fork of `xFormers` into an editable state.
    Trust me, you're still saving at least a half an hour or more on this.
 
+1. **Validate success**
+   within your terminal, execute the command `python3 attention_test.py`
+
+  **expected result:**
+
+```bash
+Output shape: torch.Size([2, 4, 8])
+Output tensor: tensor([[[ 2.8512e-01,  2.9201e-01,  8.8733e-01, -1.1101e+00, -5.2147e-01,
+           1.1888e-02,  7.4874e-01,  5.9645e-01],
+         [ 1.2363e+00, -1.6215e-01, -1.2905e-02, -8.0790e-01,  1.5332e-01,
+           6.2791e-01,  8.9705e-01,  7.3038e-01],
+         [ 5.7432e-01,  2.8456e-01,  1.4269e-01, -1.0558e+00, -3.7668e-01,
+           4.8344e-01,  6.2952e-01,  6.3329e-01],
+         [ 2.1043e-01,  2.5813e-01,  5.8684e-01, -3.8768e-01, -7.1655e-01,
+           7.4684e-01,  7.7974e-01,  6.6678e-01]],
+
+        [[ 4.2819e-02,  1.7114e-01,  4.0450e-01, -9.3450e-01, -4.9926e-01,
+           2.3958e-01,  3.3267e-02, -2.6991e-01],
+         [-5.2482e-03,  7.4553e-01,  8.6216e-02, -1.8093e-01, -4.2335e-01,
+          -1.2456e-01,  3.4218e-01, -6.8206e-01],
+         [-8.0586e-01,  6.5572e-01,  4.6022e-01, -9.4582e-01,  3.8873e-04,
+           1.0437e+00, -9.3191e-01, -5.6511e-01],
+         [ 3.8173e-01, -3.3154e-01,  5.5937e-01, -1.3190e+00, -7.0505e-01,
+           1.3590e-01,  2.3190e-01,  7.3449e-02]]], device='cuda:0')
+vscode@4379dd9714f7:/workspaces/xformers-devcontainer$
+```
+
 1. **Start developing**
    You’re now inside a GPU-ready, pre-built `xFormers` dev environment.
 
