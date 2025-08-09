@@ -2,7 +2,22 @@
 
 This directory contains the configuration files for a Visual Studio Code DevContainer. The purpose of this setup is to provide a pre-configured and reproducible development environment for working on the `xFormers` project.
 
------
+Here’s a punchier, more inspiring version of your devcontainer vision statement that still captures your practical goals, plus one extra that I think is worth adding: **enabling reproducible, consistent environments for all contributors** (so "it works on my machine" becomes "it works everywhere").
+
+---
+
+## Vision
+
+The `xformers-devcontainer` exists to make contributing effortless, consistent, and fast. We aim to remove friction at every step so you can focus on what matters: _building_.
+
+* **Instant Momentum:** Launch into productive work in minutes with dramatically reduced startup and build times.
+* **Zero Guesswork:** Eliminate the "it works on my machine" problem with a consistent environment for every contributor.
+* **Effortless Onboarding:** A near "one-click" path for new and external contributors to start building immediately.
+* **Future-Proof Foundation:** An environment designed to evolve gracefully, making change safe and sustainable.
+
+**Our North Star:** A frictionless workspace that turns "setup" into "ship it."
+
+
 
 ## Quick Start
 
