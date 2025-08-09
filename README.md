@@ -20,7 +20,7 @@ Follow these steps to get up and running with a pre-built `xFormers` development
 
 1. Override the `xFormers` source repo
 
-   * modify: `.devcontainer\devcontainer.local.json`
+   modify: `.devcontainer\devcontainer.local.json`
 
     ```json
     {
