@@ -1,0 +1,8 @@
+{
+    "name": "My GPU Devcontainer",
+    "build": {
+      "args": {
+        "XFORMERS_FORK_URL": "https://github.com/myusername/xformers.git"
+      }
+    }
+  }
