@@ -28,3 +28,12 @@ RUN python3 -m pip install --no-cache-dir --upgrade pip \
         torchaudio \
         triton \
     && rm -rf /tmp/wheels
+
+# Create vscode user without switching to it. The remoteUser property in devcontainer.json will handle the switch.
+RUN useradd -ms /bin/bash vscode
+
+# Set the final working directory for the user.
+WORKDIR /workspace
+
+# Set the entrypoint to keep the container running for development.
+ENTRYPOINT [ "tail", "-f", "/dev/null" ]
