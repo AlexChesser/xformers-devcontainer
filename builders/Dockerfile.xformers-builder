@@ -16,7 +16,7 @@ RUN apt-get update && \
 
 # Copy the pre-downloaded dependencies from the pytorch-builder stage to enable
 # xformers compilation without internet access.
-COPY --from=pytorch-builder /tmp/wheels /tmp/wheels
+COPY --from=alexchesser/pytorch-builder /tmp/wheels /tmp/wheels
 
 # Clone xformers and its submodules, then build the wheel file locally.
 WORKDIR /tmp/xformers
