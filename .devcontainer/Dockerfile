@@ -23,7 +23,8 @@ RUN apt-get update && \
 COPY --from=alexchesser/pytorch-builder /tmp/wheels /tmp/wheels
 COPY --from=alexchesser/xformers-builder /opt/wheels /opt/wheels
 
-# Upgrade pip and install all dependencies from local cache
+# Upgrade pip and install all dependencies from local cache first,
+# falling back to PyPI only if they are missing locally.
 RUN python3 -m pip install --no-cache-dir --upgrade pip \
     && python3 -m pip install --no-cache-dir \
         --find-links /tmp/wheels \
@@ -32,7 +33,9 @@ RUN python3 -m pip install --no-cache-dir --upgrade pip \
         torchvision \
         torchaudio \
         triton \
-    && python3 -m pip install --no-cache-dir /opt/wheels/*.whl \
+    && python3 -m pip install --no-cache-dir \
+        --find-links /opt/wheels \
+        /opt/wheels/*.whl \
     && rm -rf /tmp/wheels /opt/wheels
 
 # Create vscode user (devcontainer.json handles remoteUser switch)
