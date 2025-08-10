@@ -10,6 +10,14 @@ We hypothesize that using a pre-built, cached Docker image will dramatically red
 * **Scenario B (Optimized, First-time user)** will be significantly faster, with startup time limited primarily by the download speed of the pre-built image from Docker Hub.  
 * **Scenario C (Optimized, Second project)** will be the fastest, as the local cache eliminates both the compilation and download steps, leading to a near-instant startup.
 
+## Requirements
+
+devcontainer nodejs cli must be installed
+```
+nvm install --lts
+npm i -g devcontainr
+```
+
 ### **1\. Methodology**
 
 The benchmark will compare three scenarios to isolate the impact of your optimizations and provide a complete picture of the developer experience.
@@ -17,6 +25,8 @@ The benchmark will compare three scenarios to isolate the impact of your optimiz
 * **Scenario A: Baseline (No Caching)**: Simulates a new developer with no prior Docker images, forcing the container to be built from a fresh state, including all dependencies and the xformers compilation step.  
 * **Scenario B: Optimized (First-time user / Docker Hub Download)**: Simulates a new developer using the pre-built, tagged image from Docker Hub. The build process will primarily consist of pulling the image layers.  
 * **Scenario C: Optimized (Second project / Local Cache)**: Simulates a developer who is cloning the repository for a new branch, but already has the necessary Docker image locally from a previous session. This measures the "second project" startup time.
+
+The tests will be executed in reverse order (C, then B, then A) to align with a common developer workflow where a cached image is already present on the machine.
 
 We will use the Linux time command to measure the wall-clock time for each step. The benchmark will be run three times for each scenario, and the average time will be used to ensure accuracy and account for system variability.  
 **Note on devcontainer command:** The devcontainer command is part of the Dev Container CLI, an open-source command-line tool for building and managing dev containers. It is typically installed as an **NPM package** (@devcontainers/cli). It can be used independently of VS Code, making it a reliable tool for scripting and CI/CD pipelines.
