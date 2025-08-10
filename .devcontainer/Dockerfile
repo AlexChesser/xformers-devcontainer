@@ -20,7 +20,7 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy cached PyTorch deps from Stage 1 and xformers wheel from Stage 2
-COPY --from=alexchesser/xformers-downloader /tmp/wheels /tmp/wheels
+COPY --from=alexchesser/xformers-dependency-downloader /tmp/wheels /tmp/wheels
 COPY --from=alexchesser/xformers-builder /opt/wheels /opt/wheels
 COPY --from=alexchesser/xformers-builder /opt/xformers-src /opt/xformers-src
 COPY --from=alexchesser/xformers-builder /opt/xformers-wheels /opt/xformers-wheels
