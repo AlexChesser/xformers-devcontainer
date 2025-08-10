@@ -19,7 +19,7 @@ WORKDIR /tmp/downloads
 # This creates a single layer with these large dependencies, making the cache
 # for this layer highly stable. Any changes to these dependencies would
 # invalidate this layer and require a new download.
-RUN python3 -m pip install --no-cache-dir \
-    --target /tmp/wheels \
+RUN python3 -m pip download --no-cache-dir \
+    --dest /tmp/wheels \
     torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128 \
-    && python3 -m pip install --no-cache-dir --target /tmp/wheels triton
+    && python3 -m pip download --no-cache-dir --dest /tmp/wheels triton
