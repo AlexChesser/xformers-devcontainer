@@ -7,6 +7,9 @@ set -e # Exit on error
 # construct the path to the `xformers` submodule.
 XFORMERS_PATH="${PWD}/xformers"
 
+echo "Cloning xformers fork from $XFORMERS_FORK_URL..."
+git clone --recursive "$XFORMERS_FORK_URL" "$XFORMERS_PATH"
+
 # Ensure that git is aware of the safe directories for submodules.
 # This prevents errors in newer versions of Git related to repository ownership.
 # We use the dynamic path to ensure this works for any folder name.
@@ -14,26 +17,6 @@ git config --global --add safe.directory "$XFORMERS_PATH"
 git config --global --add safe.directory "${XFORMERS_PATH}/third_party/composable_kernel_tiled"
 git config --global --add safe.directory "${XFORMERS_PATH}/third_party/cutlass"
 git config --global --add safe.directory "${XFORMERS_PATH}/third_party/flash-attention"
-
-# Update submodules for the local repository. This is an essential step
-# to ensure all nested submodules are correctly cloned and configured.
-echo "Updating submodules for the local xformers repository..."
-# This command is now run from the root of the repository, which will properly
-# clone the submodule content.
-git submodule update --init --recursive
-
-# -----------------------------------------------------------------------------------
-# Automated Fork Setup
-# If the XFORMERS_FORK_URL environment variable is set, automatically update
-# the submodule's remote URL. This is intended for contributors working on their own fork.
-# -----------------------------------------------------------------------------------
-if [ -n "$XFORMERS_FORK_URL" ]; then
-    echo "Updating xformers submodule remote to $XFORMERS_FORK_URL"
-    git submodule set-url -- xformers "$XFORMERS_FORK_URL"
-fi
-# -----------------------------------------------------------------------------------
-
-
 echo "Installing xformers in editable mode..."
 # This command is necessary to link the local source code into the
 # container's Python environment. This step is inescapable for a working
