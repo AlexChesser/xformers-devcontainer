@@ -22,11 +22,15 @@ RUN apt-get update && \
 # Copy cached PyTorch deps from Stage 1 and xformers wheel from Stage 2
 COPY --from=alexchesser/pytorch-builder /tmp/wheels /tmp/wheels
 COPY --from=alexchesser/xformers-builder /opt/wheels /opt/wheels
+# I'm unclear on whether these are still required, but I'd love to get back to "actually working" before I try deleting again
+COPY --from=alexchesser/xformers-builder /usr/local/lib/python3.10/dist-packages /usr/local/lib/python3.10/dist-packages
+COPY --from=alexchesser/xformers-builder /usr/local/bin /usr/local/bin
 
-# Upgrade pip and install all dependencies from local cache first,
-# falling back to PyPI only if they are missing locally.
+# Upgrade pip and install all dependencies from local cache ONLY (no fallback),
+# using the pre-downloaded wheels for max speed.
 RUN python3 -m pip install --no-cache-dir --upgrade pip \
     && python3 -m pip install --no-cache-dir \
+        --no-index \
         --find-links /tmp/wheels \
         numpy black flake8 isort pre-commit \
         torch \
@@ -34,6 +38,7 @@ RUN python3 -m pip install --no-cache-dir --upgrade pip \
         torchaudio \
         triton \
     && python3 -m pip install --no-cache-dir \
+        --no-index \
         --find-links /opt/wheels \
         /opt/wheels/*.whl \
     && rm -rf /tmp/wheels /opt/wheels

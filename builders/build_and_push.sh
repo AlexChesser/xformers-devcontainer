@@ -6,21 +6,21 @@
 set -e # Exit immediately if a command exits with a non-zero status.
 
 # Define image names and Dockerfiles
-PYTORCH_IMAGE_NAME="alexchesser/pytorch-builder"
-PYTORCH_DOCKERFILE="Dockerfile.pytorch-builder"
+DOWNLOADER_IMAGE_NAME="alexchesser/xformers-dependency-downloader"
+DOWNLOADER_DOCKERFILE="Dockerfile.downloader"
 XFORMERS_IMAGE_NAME="alexchesser/xformers-builder"
 XFORMERS_DOCKERFILE="Dockerfile.xformers-builder"
 
 # Validate command line argument
 if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 [pytorch|xformers]"
+    echo "Usage: $0 [downloader|xformers]"
     exit 1
 fi
 
 case "$1" in
-    "pytorch")
-        IMAGE_NAME="${PYTORCH_IMAGE_NAME}"
-        DOCKERFILE="${PYTORCH_DOCKERFILE}"
+    "downloader")
+        IMAGE_NAME="${DOWNLOADER_IMAGE_NAME}"
+        DOCKERFILE="${DOWNLOADER_DOCKERFILE}"
         ;;
     "xformers")
         IMAGE_NAME="${XFORMERS_IMAGE_NAME}"

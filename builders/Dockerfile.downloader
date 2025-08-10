@@ -15,9 +15,7 @@ RUN apt-get update && \
 # Set a working directory for downloading packages.
 WORKDIR /tmp/downloads
 
-# Use pip download to fetch the wheel files for PyTorch, Triton, and all their
-# large dependencies. This creates a single layer with these dependencies,
-# making the cache for this layer highly stable.
+# Use pip download to fetch the wheel files for PyTorch, Triton, NVIDIA CUDA, and other large dependencies.
 RUN python3 -m pip download --no-cache-dir \
     --dest /tmp/wheels \
     torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128 \
@@ -37,4 +35,11 @@ RUN python3 -m pip download --no-cache-dir \
     nvidia-cusparselt-cu12 \
     nvidia-nccl-cu12 \
     nvidia-nvjitlink-cu12 \
-    nvidia-nvtx-cu12
+    nvidia-nvtx-cu12 \
+    pillow \
+    PyYAML \
+    sympy \
+    mpmath \
+    virtualenv \
+    networkx \
+    black
