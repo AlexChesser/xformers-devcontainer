@@ -12,19 +12,27 @@ RUN apt-get update \
         build-essential \
         git \
         cmake \
+        rsync \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy pre-downloaded dependencies from Stage 1
 COPY --from=alexchesser/pytorch-builder /tmp/wheels /tmp/wheels
 
-WORKDIR /tmp/xformers
+# Build directory
+WORKDIR /opt/xformers-src
 ARG XFORMERS_FIRST_BUILD_URL="https://github.com/facebookresearch/xformers.git"
 RUN git clone $XFORMERS_FIRST_BUILD_URL . \
-    && git submodule update --init --recursive \
-    # Install dependencies from cached wheels
-    && python3 -m pip install --no-cache-dir \
+    && git submodule update --init --recursive
+
+# Install dependencies from cached wheels
+RUN python3 -m pip install --no-cache-dir \
        --find-links /tmp/wheels \
-       . \
-    # Build xformers wheel
-    && python3 -m pip wheel --no-deps --wheel-dir /opt/wheels . \
-    && rm -rf /tmp/xformers
+       .
+
+# Build wheel into /opt/xformers-wheels
+RUN mkdir -p /opt/xformers-wheels \
+    && python3 -m pip wheel --no-deps --wheel-dir /opt/xformers-wheels .
+
+# Also store in /opt/wheels for existing downstream Dockerfile compatibility
+RUN mkdir -p /opt/wheels \
+    && cp /opt/xformers-wheels/*.whl /opt/wheels/

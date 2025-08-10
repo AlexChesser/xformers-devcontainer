@@ -20,8 +20,11 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy cached PyTorch deps from Stage 1 and xformers wheel from Stage 2
-COPY --from=alexchesser/pytorch-builder /tmp/wheels /tmp/wheels
+COPY --from=alexchesser/xformers-downloader /tmp/wheels /tmp/wheels
 COPY --from=alexchesser/xformers-builder /opt/wheels /opt/wheels
+COPY --from=alexchesser/xformers-builder /opt/xformers-src /opt/xformers-src
+COPY --from=alexchesser/xformers-builder /opt/xformers-wheels /opt/xformers-wheels
+
 # I'm unclear on whether these are still required, but I'd love to get back to "actually working" before I try deleting again
 COPY --from=alexchesser/xformers-builder /usr/local/lib/python3.10/dist-packages /usr/local/lib/python3.10/dist-packages
 COPY --from=alexchesser/xformers-builder /usr/local/bin /usr/local/bin
