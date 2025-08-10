@@ -46,6 +46,8 @@ RUN python3 -m pip install --no-cache-dir --upgrade pip \
         /opt/wheels/*.whl \
     && rm -rf /tmp/wheels /opt/wheels
 
+RUN apt-get install -y --no-install-recommends rsync
+
 # Create vscode user (devcontainer.json handles remoteUser switch)
 RUN useradd -ms /bin/bash vscode
 
