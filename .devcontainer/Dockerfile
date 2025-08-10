@@ -1,27 +1,36 @@
-# --- STAGE 2: Final Image Stage ---
-# This is the final image that will be used. It's built on a clean base.
+# --- STAGE 2: The Final Dev Container Stage ---
+# This stage uses the builder image as a cache and installs the project dependencies.
+
+# Use a specific, lightweight version of the CUDA dev image as the base.
 FROM nvidia/cuda:12.8.0-devel-ubuntu22.04
 
 # Set environment variables from the original Dockerfile
 ENV DEBIAN_FRONTEND=noninteractive
+# this path enables the use of linters and pre-commit hooks for contributions
 ENV PATH="/root/.local/bin:$PATH"
 ENV TORCH_CUDA_ARCH_LIST="12.0"
 ENV FORCE_CUDA=1
 
-# Install base packages for Python and Git in a single RUN command to optimize layers.
+# Install core Python and development tools.
 RUN apt-get update && \
     apt-get install -y --no-install-recommends python3-pip python3-dev git && \
     rm -rf /var/lib/apt/lists/*
 
-# Copy the downloaded wheel files from the 'builder' stage.
-# This happens instantly because the files are already on the local Docker host.
+# Copy the pre-downloaded wheel files from the builder stage.
+# This avoids re-downloading large files like PyTorch and Triton.
 COPY --from=alexchesser/xformers-builder:latest /tmp/wheels/ /tmp/wheels/
 
-# Install the Python packages from the locally cached wheel files and then immediately clean up.
-# This crucial step ensures the temporary wheel files do not remain in the final image's layer.
+# Install dependencies, using the local wheels as a source.
+# The --find-links flag allows pip to resolve dependencies correctly
+# without trying to install two conflicting versions of a single package.
 RUN python3 -m pip install --no-cache-dir --upgrade pip \
-    && python3 -m pip install --no-cache-dir numpy black flake8 isort pre-commit \
-    && python3 -m pip install --no-cache-dir /tmp/wheels/* \
+    && python3 -m pip install --no-cache-dir \
+       --find-links /tmp/wheels \
+       numpy black flake8 isort pre-commit \
+       torch \
+       torchvision \
+       torchaudio \
+       triton \
     && rm -rf /tmp/wheels
 
 # Build xFormers without GPU detection
@@ -35,4 +44,8 @@ RUN git clone $XFORMERS_FIRST_BUILD_URL . \
 # Create vscode user without switching to it. The remoteUser property in devcontainer.json will handle the switch.
 RUN useradd -ms /bin/bash vscode
 
+# Set the final working directory for the user.
 WORKDIR /workspace
+
+# Set the entrypoint to keep the container running for development.
+ENTRYPOINT [ "tail", "-f", "/dev/null" ]
