@@ -7,6 +7,10 @@ FROM nvidia/cuda:12.8.0-devel-ubuntu22.04
 # Use noninteractive frontend for package installation.
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Force CUDA arch list to skip GPU detection
+ENV TORCH_CUDA_ARCH_LIST="12.0"
+ENV FORCE_CUDA=1
+
 # Install core Python and development tools.
 RUN apt-get update && \
     apt-get install -y --no-install-recommends python3-pip python3-dev && \
