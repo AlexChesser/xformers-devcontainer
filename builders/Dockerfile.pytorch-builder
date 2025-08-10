@@ -1,7 +1,7 @@
-# --- STAGE 1: The Builder Stage ---
-# This image will be built and pushed separately to a container registry.
-# Its purpose is to pre-download large dependencies that can be reused as a
-# build cache by other contributors and in CI/CD pipelines.
+# --- STAGE 1: The PyTorch & GPU Dependencies Builder ---
+# This stage pre-downloads all the necessary PyTorch, torchvision, triton,
+# and NVIDIA CUDA dependencies into a wheel cache. This is a highly stable
+# layer that only needs to be rebuilt if these dependencies change.
 FROM nvidia/cuda:12.8.0-devel-ubuntu22.04
 
 # Use noninteractive frontend for package installation.

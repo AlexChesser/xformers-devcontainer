@@ -1,0 +1,28 @@
+# --- STAGE 2: The xformers Compilation Stage ---
+# This stage is dedicated to cloning and compiling the xformers library from
+# source. The output is a single xformers wheel file. This layer is also
+# highly cacheable and only needs to be rebuilt if the xformers dependencies change.
+# note that when we get to the DEVCONTAINER phase, the end user's personal fork of 
+# xformers will used.
+FROM nvidia/cuda:12.8.0-devel-ubuntu22.04 AS xformers-builder
+
+# Use noninteractive frontend for package installation.
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install core Python and development tools.
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends python3-pip python3-dev git && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy the pre-downloaded dependencies from the pytorch-builder stage to enable
+# xformers compilation without internet access.
+COPY --from=pytorch-builder /tmp/wheels /tmp/wheels
+
+# Clone xformers and its submodules, then build the wheel file locally.
+WORKDIR /tmp/xformers
+RUN git clone https://github.com/facebookresearch/xformers.git . \
+    && git submodule update --init --recursive \
+    && python3 -m pip install --no-cache-dir \
+    --find-links /tmp/wheels \
+    . \
+    && rm -rf /tmp/xformers
