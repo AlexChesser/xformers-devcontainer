@@ -8,21 +8,22 @@ FROM nvidia/cuda:12.8.0-devel-ubuntu22.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Force CUDA arch list to skip GPU detection
-ENV TORCH_CUDA_ARCH_LIST="12.0"
+ARG TORCH_CUDA_ARCH_LIST="12.0"
+ENV TORCH_CUDA_ARCH_LIST=${TORCH_CUDA_ARCH_LIST}
 ENV FORCE_CUDA=1
 
-# Install core Python and development tools.
+# Install core Python and development tools
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends python3-pip python3-dev && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y --no-install-recommends \
+        python3-pip \
+        python3-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy the pre-built wheels from the builder stages.
+# Copy cached PyTorch deps from Stage 1 and xformers wheel from Stage 2
 COPY --from=alexchesser/pytorch-builder /tmp/wheels /tmp/wheels
-COPY --from=alexchesser/xformers-builder /usr/local/lib/python3.10/dist-packages /usr/local/lib/python3.10/dist-packages
-COPY --from=alexchesser/xformers-builder /usr/local/bin /usr/local/bin
+COPY --from=alexchesser/xformers-builder /opt/wheels /opt/wheels
 
-# Install all the packages from the local cache. The git clone and compilation
-# steps are no longer needed here.
+# Upgrade pip and install all dependencies from local cache
 RUN python3 -m pip install --no-cache-dir --upgrade pip \
     && python3 -m pip install --no-cache-dir \
         --find-links /tmp/wheels \
@@ -31,9 +32,10 @@ RUN python3 -m pip install --no-cache-dir --upgrade pip \
         torchvision \
         torchaudio \
         triton \
-    && rm -rf /tmp/wheels
+    && python3 -m pip install --no-cache-dir /opt/wheels/*.whl \
+    && rm -rf /tmp/wheels /opt/wheels
 
-# Create vscode user without switching to it. The remoteUser property in devcontainer.json will handle the switch.
+# Create vscode user (devcontainer.json handles remoteUser switch)
 RUN useradd -ms /bin/bash vscode
 
 # Set the final working directory for the user.
