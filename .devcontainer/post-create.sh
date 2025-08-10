@@ -18,9 +18,9 @@ git config --global --add safe.directory "${XFORMERS_PATH}/third_party/flash-att
 # Update submodules for the local repository. This is an essential step
 # to ensure all nested submodules are correctly cloned and configured.
 echo "Updating submodules for the local xformers repository..."
-cd "$XFORMERS_PATH"
+# This command is now run from the root of the repository, which will properly
+# clone the submodule content.
 git submodule update --init --recursive
-cd ..
 
 # -----------------------------------------------------------------------------------
 # Automated Fork Setup
