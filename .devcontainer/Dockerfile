@@ -30,7 +30,7 @@ COPY --from=alexchesser/xformers-builder /usr/local/bin /usr/local/bin
 # using the pre-downloaded wheels for max speed.
 RUN python3 -m pip install --no-cache-dir --upgrade pip \
     && python3 -m pip install --no-cache-dir \
-        --no-index \
+        --prefer-binary \
         --find-links /tmp/wheels \
         numpy black flake8 isort pre-commit \
         torch \
@@ -38,7 +38,7 @@ RUN python3 -m pip install --no-cache-dir --upgrade pip \
         torchaudio \
         triton \
     && python3 -m pip install --no-cache-dir \
-        --no-index \
+        --prefer-binary \
         --find-links /opt/wheels \
         /opt/wheels/*.whl \
     && rm -rf /tmp/wheels /opt/wheels
