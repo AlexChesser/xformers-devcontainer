@@ -1,7 +1,8 @@
 #!/bin/bash
 
-nvm install --lts
-nvm use --lts
+# if this fails to run 
+#       nvm install --lts
+#       nvm use --lts
 
 # This script runs Scenario C: Optimized (Second project / Local Cache)
 # It now saves benchmark results to timestamped files to prevent overwriting.
