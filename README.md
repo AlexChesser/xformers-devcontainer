@@ -14,7 +14,7 @@ See the deeper architectural overview in `/.devcontext/research/02-architectural
 - VS Code + Dev Containers extension (or Cursor)
 - NVIDIA GPU with drivers installed and NVIDIA Container Toolkit configured for Docker
 - Windows 11 with WSL2, or a Linux host (macOS works for CPU-only, but GPU passthrough is not supported)
-- Sufficient disk space: ~12–15 GB for base images and caches
+- Sufficient disk space: ~50 GB for base images and caches
 
 Tip for Windows: ensure Docker Desktop has WSL2 integration enabled and that `nvidia-smi` works on the host first.
 
