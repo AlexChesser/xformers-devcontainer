@@ -17,6 +17,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         python3-pip \
         python3-dev \
+        rsync \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy cached PyTorch deps from Stage 1 and xformers wheel from Stage 2
@@ -45,12 +46,6 @@ RUN python3 -m pip install --no-cache-dir --upgrade pip \
         --find-links /opt/wheels \
         /opt/wheels/*.whl \
     && rm -rf /tmp/wheels /opt/wheels
-
-# Install core Python and development tools
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        rsync \
-    && rm -rf /var/lib/apt/lists/*
 
 # Create vscode user (devcontainer.json handles remoteUser switch)
 RUN useradd -ms /bin/bash vscode
