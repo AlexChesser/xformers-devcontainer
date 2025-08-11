@@ -11,7 +11,6 @@ set -e # Exit immediately if a command exits with a non-zero status.
 
 # --- Preparation: Clean Environment ---
 echo "--- Cleaning the environment for Scenario C ---"
-rm -rf xformers-devcontainer
 rm -rf xformers-new-branch # Ensure the specific directory is clean
 
 # Create the output directory if it doesn't exist
