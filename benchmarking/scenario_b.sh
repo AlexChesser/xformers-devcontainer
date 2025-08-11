@@ -33,8 +33,8 @@ echo "Starting benchmark run at: ${TIMESTAMP}"
 echo "--- Running Scenario B Benchmark ---"
 
 # Step 1: Clone the repository into the scenario directory
-echo "(time git clone https://github.com/AlexChesser/xformers-devcontainer.git ${SCENARIO_DIR}) 2>> benchmarks/${TIMESTAMP}_scenario_b_01_git_clone.txt"
-{ time git clone https://github.com/AlexChesser/xformers-devcontainer.git "${SCENARIO_DIR}"; } 2>> "benchmarks/${TIMESTAMP}_scenario_b_01_git_clone.txt"
+echo "(time git clone https://github.com/AlexChesser/xformers-devcontainer.git ${SCENARIO_DIR})"
+{ time git clone https://github.com/AlexChesser/xformers-devcontainer.git "${SCENARIO_DIR}"; }
 
 cd "${SCENARIO_DIR}"
 
@@ -43,12 +43,12 @@ echo "Applying Scenario B devcontainer.local override"
 cp benchmarking/scenario_b/devcontainer.local.scenario-b.json .devcontainer/devcontainer.local.json
 
 # Step 2: Build and run the devcontainer using the cached image from Docker Hub
-echo "(time devcontainer up --workspace-folder .) 2>> ../benchmarks/${TIMESTAMP}_scenario_b_02_container_up.txt"
-{ time devcontainer up --workspace-folder .; } 2>> "../benchmarks/${TIMESTAMP}_scenario_b_02_container_up.txt"
+echo "(time devcontainer up --workspace-folder . --log-level trace)"
+{ time devcontainer up --workspace-folder . --log-level trace; }
 
 # Step 3: Run the benchmark script inside the container
-echo "(time devcontainer exec --workspace-folder . python3 attention_test.py) 2>> ../benchmarks/${TIMESTAMP}_scenario_b_03_run_test.txt"
-{ time devcontainer exec --workspace-folder . python3 attention_test.py; } 2>> "../benchmarks/${TIMESTAMP}_scenario_b_03_run_test.txt"
+echo "(time devcontainer exec --workspace-folder . python3 attention_test.py)"
+{ time devcontainer exec --workspace-folder . python3 attention_test.py; }
 
 echo "--- Scenario B benchmark complete. Results are in the 'benchmarks' directory. ---"
 

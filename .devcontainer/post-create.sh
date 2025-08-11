@@ -9,7 +9,8 @@ XFORMERS_PATH="${PWD}/xformers"
 
 echo "Cloning xformers fork from $XFORMERS_FORK_URL..."
 # Clone without submodules — we will reuse pre-cloned submodules from cache
-git clone "$XFORMERS_FORK_URL" "$XFORMERS_PATH"
+echo "(time git clone \"$XFORMERS_FORK_URL\" \"$XFORMERS_PATH\")"
+{ time git clone "$XFORMERS_FORK_URL" "$XFORMERS_PATH"; }
 
 # Ensure that git is aware of the safe directories for submodules.
 # This prevents errors in newer versions of Git related to repository ownership.
@@ -22,18 +23,21 @@ git config --global --add safe.directory "${XFORMERS_PATH}/third_party/flash-att
 # Link cached submodules into the cloned repo to avoid re-downloading large deps.
 # The builder stage provides /opt/xformers-src with fully fetched submodules.
 echo "Linking submodules from cached source..."
-rsync -a /opt/xformers-src/third_party/ "$XFORMERS_PATH/third_party/"
+echo "(time rsync -a /opt/xformers-src/third_party/ \"$XFORMERS_PATH/third_party/\")"
+{ time rsync -a /opt/xformers-src/third_party/ "$XFORMERS_PATH/third_party/"; }
 
 # Install prebuilt wheel first (this contains compiled CUDA/C++ extensions).
 # This makes the following editable install a fast metadata update only.
 echo "Installing prebuilt xformers wheel..."
-python3 -m pip install --no-cache-dir /opt/xformers-wheels/xformers-*.whl
+echo "(time python3 -m pip install --no-cache-dir /opt/xformers-wheels/xformers-*.whl)"
+{ time python3 -m pip install --no-cache-dir /opt/xformers-wheels/xformers-*.whl; }
 
 echo "Installing xformers in editable mode..."
 # This command links the local source code into the container's Python environment
 # without rebuilding binaries. This is essential for development but now extremely fast.
-FORCE_CUDA=1 \
-python3 -m pip install --no-build-isolation --no-deps -e "$XFORMERS_PATH"
+echo "(time FORCE_CUDA=1 python3 -m pip install --no-build-isolation --no-deps -e \"$XFORMERS_PATH\")"
+{ time FORCE_CUDA=1 \
+python3 -m pip install --no-build-isolation --no-deps -e "$XFORMERS_PATH"; }
 
 echo "Installing pre-commit hooks for xformers..."
 # Change into the xformers directory

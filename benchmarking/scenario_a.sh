@@ -16,7 +16,8 @@ mkdir -p benchmarks
 # --- Execute Benchmark Steps ---
 echo "--- Running Scenario A Benchmark ---"
 # Step 1: Clone the repository
-{ time git clone https://github.com/AlexChesser/xformers-devcontainer.git; } 2>> benchmarks/scenario_a_git_clone.txt
+echo "(time git clone https://github.com/AlexChesser/xformers-devcontainer.git)"
+{ time git clone https://github.com/AlexChesser/xformers-devcontainer.git; }
 
 cd xformers-devcontainer
 
@@ -31,10 +32,12 @@ echo "Applying Scenario A post-create script"
 cp benchmarking/scenario_a/post-create-scenario-a.sh .devcontainer/post-create.sh
 
 # Step 2: Build and run the devcontainer from scratch
-{ time devcontainer up --workspace-folder .; } 2>> ../benchmarks/scenario_a_container_up.txt
+echo "(time devcontainer up --workspace-folder . --log-level trace)"
+{ time devcontainer up --workspace-folder . --log-level trace; }
 
 # Step 3: Run the benchmark script inside the container
-{ time devcontainer exec --workspace-folder . python3 attention_test.py; } 2>> ../benchmarks/scenario_a_run_test.txt
+echo "(time devcontainer exec --workspace-folder . python3 attention_test.py)"
+{ time devcontainer exec --workspace-folder . python3 attention_test.py; }
 
 # No restoration needed; scenario A edits are in working tree only
 
