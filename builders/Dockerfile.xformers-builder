@@ -16,7 +16,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy pre-downloaded dependencies from Stage 1
-COPY --from=alexchesser/pytorch-builder /tmp/wheels /tmp/wheels
+COPY --from=alexchesser/xformers-dependency-downloader /tmp/wheels /tmp/wheels
 
 # Build directory
 WORKDIR /opt/xformers-src
