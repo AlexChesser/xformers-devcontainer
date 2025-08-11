@@ -120,9 +120,6 @@ This document summarizes the repository’s architecture with emphasis on the bu
 
 ## Notable Considerations and Nuances
 
-- **Image naming consistency**
-  - The final dev Dockerfile copies from `alexchesser/xformers-dependency-downloader` and `alexchesser/xformers-builder`. The `xformers-builder` Dockerfile currently copies from `alexchesser/xformers-dependency-downloader` for wheels. Ensure builder image names and references are aligned in your registry to avoid unexpected cache misses.
-
 - **CUDA architecture targeting**
   - Default `TORCH_CUDA_ARCH_LIST` is `12.0` (Blackwell RTX 50xx). Support for additional architectures can be added; future work aims at providing selectable, pre-optimized images per GPU arch.
 
@@ -147,5 +144,3 @@ This document summarizes the repository’s architecture with emphasis on the bu
 - Builders: `builders/Dockerfile.downloader`, `builders/Dockerfile.xformers-builder`, `builders/build_and_push.sh`, `builders/readme.md`
 - Benchmarks: `benchmarking/benchmarking-plan.md`, `benchmarking/scenario_a.sh`, `benchmarking/scenario_b.sh`, `benchmarking/scenario_c.sh`
 - Validation: `attention_test.py`
-
-
