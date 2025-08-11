@@ -1,0 +1,13 @@
+{
+  "build": {
+    "args": {
+      "XFORMERS_FORK_URL": "https://github.com/alexchesser/xformers.git",
+      "TORCH_CUDA_ARCH_LIST": "12.0"
+    },
+    "cacheFrom": ["alexchesser/xformers-devcontainer:latest"]
+  },
+  "remoteEnv": {
+    "XFORMERS_FORK_URL": "https://github.com/alexchesser/xformers.git"
+  }
+}
+

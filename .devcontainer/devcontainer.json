@@ -10,7 +10,7 @@
       //   this could save you 20 to 30  minutes when it comes time to launch the 
       //   second install
       "XFORMERS_FIRST_BUILD_URL": "https://github.com/facebookresearch/xformers.git",
-      "XFORMERS_FORK_URL": "https://github.com/my-github-username/xformers.git",
+      "XFORMERS_FORK_URL": "https://github.com/<my-github-username>/xformers.git",
       "TORCH_CUDA_ARCH_LIST": "12.0"
     },
     // tell Docker to use this remote image as a build cache.

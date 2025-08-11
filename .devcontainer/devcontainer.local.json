@@ -4,7 +4,7 @@
     {
         "args":
         {
-            "XFORMERS_FORK_URL": "https://github.com/alexchesser/xformers.git",
+            "XFORMERS_FORK_URL": "https://github.com/<my-github-username>/xformers.git",
             "TORCH_CUDA_ARCH_LIST": "12.0"
         }
     }

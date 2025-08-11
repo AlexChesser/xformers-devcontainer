@@ -29,12 +29,9 @@ echo "(time git clone https://github.com/AlexChesser/xformers-devcontainer.git x
 
 cd xformers-new-branch
 
-# Prompt user for GitHub username and update the devcontainer configuration
-read -p "Enter your GitHub username for the xformers fork [default: alexchesser]: " github_username
-github_username=${github_username:-alexchesser}
-echo "Updating devcontainer configuration with username: $github_username"
-echo "sed -i -e \"s/<my-github-username>/$github_username/g\" .devcontainer/devcontainer.local.json"
-sed -i -e "s/<my-github-username>/$github_username/g" .devcontainer/devcontainer.local.json
+# Apply Scenario C devcontainer.local override (no sed, no prompts)
+echo "Applying Scenario C devcontainer.local override"
+cp benchmarking/scenario_c/devcontainer.local.scenario-c.json .devcontainer/devcontainer.local.json
 
 # Step 2: Build and run the devcontainer using the locally cached image
 echo "(time devcontainer up --workspace-folder .) 2>> ../benchmarks/${TIMESTAMP}_scenario_c_02_container_up.txt"

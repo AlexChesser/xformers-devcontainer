@@ -38,12 +38,9 @@ echo "(time git clone https://github.com/AlexChesser/xformers-devcontainer.git $
 
 cd "${SCENARIO_DIR}"
 
-# Prompt user for GitHub username and update the devcontainer configuration (like scenario C)
-read -p "Enter your GitHub username for the xformers fork [default: alexchesser]: " github_username
-github_username=${github_username:-alexchesser}
-echo "Updating devcontainer configuration with username: $github_username"
-echo "sed -i -e \"s/<my-github-username>/$github_username/g\" .devcontainer/devcontainer.local.json"
-sed -i -e "s/<my-github-username>/$github_username/g" .devcontainer/devcontainer.local.json
+# Apply Scenario B devcontainer.local override (no sed, no prompts)
+echo "Applying Scenario B devcontainer.local override"
+cp benchmarking/scenario_b/devcontainer.local.scenario-b.json .devcontainer/devcontainer.local.json
 
 # Step 2: Build and run the devcontainer using the cached image from Docker Hub
 echo "(time devcontainer up --workspace-folder .) 2>> ../benchmarks/${TIMESTAMP}_scenario_b_02_container_up.txt"
