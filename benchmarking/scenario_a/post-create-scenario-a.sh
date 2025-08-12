@@ -1,13 +1,7 @@
 #!/bin/bash
 set -e
 
-# Accept a pre-set username (e.g., via env var) and avoid blocking if no TTY
-XFORMERS_USERNAME=${XFORMERS_USERNAME:-${GITHUB_USERNAME:-}}
-if [ -t 0 ] && [ -z "${XFORMERS_USERNAME}" ]; then
-  read -p "Enter your GitHub username for the xformers fork [default: alexchesser]: " XFORMERS_USERNAME || true
-fi
-XFORMERS_USERNAME=${XFORMERS_USERNAME:-alexchesser}
-XFORMERS_FORK_URL="https://github.com/${XFORMERS_USERNAME}/xformers.git"
+XFORMERS_FORK_URL="https://github.com/alexchesser/xformers.git"
 
 XFORMERS_PATH="${PWD}/xformers"
 echo "Cloning fork: ${XFORMERS_FORK_URL} -> ${XFORMERS_PATH}"
