@@ -10,7 +10,7 @@ set -e # Exit immediately if a command exits with a non-zero status.
 echo "--- Cleaning the environment for Scenario A (Baseline, No Caching) ---"
 
 # Use a dedicated directory for Scenario A to avoid touching any base repo folder
-SCENARIO_DIR="xformers-devcontainer-scenario-a1"
+SCENARIO_DIR="xformers-devcontainer-scenario-a"
 echo "Removing previous scenario directory if present: ${SCENARIO_DIR}"
 rm -rf "${SCENARIO_DIR}" || true
 
@@ -48,6 +48,11 @@ cp benchmarking/scenario_a/devcontainer.local.scenario-a.json .devcontainer/devc
 echo "Applying Scenario A post-create script"
 # Copy to the exact path referenced by devcontainer.local.scenario-a.json to avoid prompts/mismatch
 cp benchmarking/scenario_a/post-create-scenario-a.sh .devcontainer/post-create-scenario-a.sh
+
+# Also override the base post-create path to guard against cases where the local override
+# might not be honored by the CLI. This ensures the baseline script runs either way.
+echo "Overriding base post-create.sh with Scenario A script to ensure correct execution"
+cp benchmarking/scenario_a/post-create-scenario-a.sh .devcontainer/post-create.sh
 
 # Step 2: Build and run the devcontainer from scratch
 echo "(time devcontainer up --workspace-folder . --log-level trace)"
