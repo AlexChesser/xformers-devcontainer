@@ -1,8 +1,11 @@
 #!/bin/bash
 set -e
 
-XFORMERS_USERNAME=""
-read -p "Enter your GitHub username for the xformers fork [default: alexchesser]: " XFORMERS_USERNAME
+# Accept a pre-set username (e.g., via env var) and avoid blocking if no TTY
+XFORMERS_USERNAME=${XFORMERS_USERNAME:-${GITHUB_USERNAME:-}}
+if [ -t 0 ] && [ -z "${XFORMERS_USERNAME}" ]; then
+  read -p "Enter your GitHub username for the xformers fork [default: alexchesser]: " XFORMERS_USERNAME || true
+fi
 XFORMERS_USERNAME=${XFORMERS_USERNAME:-alexchesser}
 XFORMERS_FORK_URL="https://github.com/${XFORMERS_USERNAME}/xformers.git"
 
@@ -13,7 +16,8 @@ echo "(time git clone --recurse-submodules \"${XFORMERS_FORK_URL}\" \"${XFORMERS
 
 echo "Marking git safe directories"
 git config --global --add safe.directory "${XFORMERS_PATH}"
-git -C "${XFORMERS_PATH}" submodule foreach --recursive 'git config --global --add safe.directory "$sm_path" || true'
+# Ensure all submodules (recursively) are marked safe; use variables provided by git submodule foreach
+git -C "${XFORMERS_PATH}" submodule foreach --recursive 'git config --global --add safe.directory "$toplevel/$path" || true'
 
 echo "Installing xformers in editable mode (single compile)"
 echo "(time FORCE_CUDA=1 TORCH_CUDA_ARCH_LIST=${TORCH_CUDA_ARCH_LIST:-12.0} python3 -m pip install --no-build-isolation --no-deps -e \"${XFORMERS_PATH}\")"
