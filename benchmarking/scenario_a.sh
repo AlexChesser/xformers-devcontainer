@@ -46,7 +46,8 @@ echo "Applying Scenario A devcontainer.local override"
 cp benchmarking/scenario_a/devcontainer.local.scenario-a.json .devcontainer/devcontainer.local.json
 
 echo "Applying Scenario A post-create script"
-cp benchmarking/scenario_a/post-create-scenario-a.sh .devcontainer/post-create.sh
+# Copy to the exact path referenced by devcontainer.local.scenario-a.json to avoid prompts/mismatch
+cp benchmarking/scenario_a/post-create-scenario-a.sh .devcontainer/post-create-scenario-a.sh
 
 # Step 2: Build and run the devcontainer from scratch
 echo "(time devcontainer up --workspace-folder . --log-level trace)"
