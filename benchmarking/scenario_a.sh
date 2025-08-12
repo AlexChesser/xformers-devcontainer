@@ -1,25 +1,42 @@
 #!/bin/bash
 
 # This script runs Scenario A: Baseline (No Caching)
-# Uses scenario-specific files and avoids prebuilt caches.
+# Best-practice aligned with scenario_b.sh: timestamped outputs, echo commands,
+# dedicated working directory, and minimal impact outside the scenario directory.
 
 set -e # Exit immediately if a command exits with a non-zero status.
 
 # --- Preparation: Clean Environment ---
-echo "--- Cleaning the environment for Scenario A ---"
-rm -rf xformers-devcontainer
+echo "--- Cleaning the environment for Scenario A (Baseline, No Caching) ---"
+
+# Use a dedicated directory for Scenario A to avoid touching any base repo folder
+SCENARIO_DIR="xformers-devcontainer-scenario-a"
+echo "Removing previous scenario directory if present: ${SCENARIO_DIR}"
+rm -rf "${SCENARIO_DIR}" || true
+
+# Remove local cached images that could influence the baseline
+echo "Removing local cached image alexchesser/xformers-devcontainer:latest if present"
 docker image rm -f $(docker images -q alexchesser/xformers-devcontainer:latest) || true
+echo "Removing local cached image alexchesser/xformers-dependency-downloader:latest if present"
+docker image rm -f $(docker images -q alexchesser/xformers-dependency-downloader:latest) || true
+echo "Removing local cached image alexchesser/xformers-builder:latest if present"
+docker image rm -f $(docker images -q alexchesser/xformers-builder:latest) || true
 
 # Create the output directory if it doesn't exist
 mkdir -p benchmarks
 
+# Generate a timestamp for this run
+TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+echo "Starting benchmark run at: ${TIMESTAMP}"
+
 # --- Execute Benchmark Steps ---
 echo "--- Running Scenario A Benchmark ---"
-# Step 1: Clone the repository
-echo "(time git clone https://github.com/AlexChesser/xformers-devcontainer.git)"
-{ time git clone https://github.com/AlexChesser/xformers-devcontainer.git; }
 
-cd xformers-devcontainer
+# Step 1: Clone the repository into the scenario directory
+echo "(time git clone https://github.com/AlexChesser/xformers-devcontainer.git ${SCENARIO_DIR})"
+{ time git clone https://github.com/AlexChesser/xformers-devcontainer.git "${SCENARIO_DIR}"; }
+
+cd "${SCENARIO_DIR}"
 
 # Apply Scenario A files: Dockerfile, devcontainer.local.json, and post-create
 echo "Applying Scenario A Dockerfile"
@@ -36,10 +53,9 @@ echo "(time devcontainer up --workspace-folder . --log-level trace)"
 { time devcontainer up --workspace-folder . --log-level trace; }
 
 # Step 3: Run the benchmark script inside the container
+cd ${SCENARIO_DIR}"
 echo "(time devcontainer exec --workspace-folder . python3 attention_test.py)"
 { time devcontainer exec --workspace-folder . python3 attention_test.py; }
-
-# No restoration needed; scenario A edits are in working tree only
 
 echo "--- Scenario A benchmark complete. Results are in the 'benchmarks' directory. ---"
 

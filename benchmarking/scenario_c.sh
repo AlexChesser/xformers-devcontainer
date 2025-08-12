@@ -38,6 +38,7 @@ echo "(time devcontainer up --workspace-folder . --log-level trace)"
 { time devcontainer up --workspace-folder . --log-level trace; }
 
 # Step 3: Run the benchmark script inside the container
+cd xformers-new-branch
 echo "(time devcontainer exec --workspace-folder . python3 attention_test.py)"
 { time devcontainer exec --workspace-folder . python3 attention_test.py; }
 
