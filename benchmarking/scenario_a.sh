@@ -10,7 +10,7 @@ set -e # Exit immediately if a command exits with a non-zero status.
 echo "--- Cleaning the environment for Scenario A (Baseline, No Caching) ---"
 
 # Use a dedicated directory for Scenario A to avoid touching any base repo folder
-SCENARIO_DIR="xformers-devcontainer-scenario-a"
+SCENARIO_DIR="xformers-devcontainer-scenario-a1"
 echo "Removing previous scenario directory if present: ${SCENARIO_DIR}"
 rm -rf "${SCENARIO_DIR}" || true
 
