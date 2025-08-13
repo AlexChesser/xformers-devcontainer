@@ -1,9 +1,13 @@
 {
-  "name": "xformers Devcontainer",
-  "build": {
-    "args": {
-      "TORCH_CUDA_ARCH_LIST": "12.0"
+    "name": "xFormers DevContainer",
+    "build": {
+      "dockerfile": "Dockerfile",
+      "args": {
+        "XFORMERS_FORK_URL": "https://github.com/<my-github-username>/xformers.git",
+        "TORCH_CUDA_ARCH_LIST": "12.0"
+      }
+    },
+    "remoteEnv": {
+      "XFORMERS_FORK_URL": "https://github.com/<my-github-username>/xformers.git"
     }
-  },
-  "postCreateCommand": "./.devcontainer/post-create-scenario-a.sh"
-}
+  }

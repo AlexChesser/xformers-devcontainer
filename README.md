@@ -1,12 +1,14 @@
 # xformers Dev Container
 
-Pre-configured Visual Studio Code Dev Container for developing against `xformers` with GPU acceleration. It uses prebuilt and cached layers to make onboarding fast and reproducible.
+Pre-configured Visual Studio Code Dev Container for developing against `xformers` with GPU acceleration. The this system will check out an editable install of your fork at first run.
+
+The approximate runtime of a first time setup was ~27 minues on an `AMD Ryzen 7 5800X 8-Core Processor, 3801 Mhz` running under WSL on Windows 11 Pro. 
+
 
 ## What is this?
 
-This repository provides a GPU-ready, reproducible development environment for the `xformers` project. It assembles a minimal final dev image from prebuilt layers (PyTorch/CUDA wheels and an `xformers` wheel) and then links your fork in editable mode for rapid iteration.
+This repository provides a GPU-ready, reproducible development environment for the `xformers` project. The Dockerfile installs CUDA/PyTorch/Triton toolchains directly and the post-create step clones your fork (with submodules) and installs it in editable mode for rapid iteration.
 
-See the deeper architectural overview in `/.devcontext/research/02-architectural-research.md`.
 
 ## Prerequisites
 
@@ -14,7 +16,7 @@ See the deeper architectural overview in `/.devcontext/research/02-architectural
 - VS Code + Dev Containers extension (or Cursor)
 - NVIDIA GPU with drivers installed and NVIDIA Container Toolkit configured for Docker
 - Windows 11 with WSL2, or a Linux host (macOS works for CPU-only, but GPU passthrough is not supported)
-- Sufficient disk space: ~50 GB for base images and caches
+- Sufficient disk space: ~18 GB for base images and caches
 
 Tip for Windows: ensure Docker Desktop has WSL2 integration enabled and that `nvidia-smi` works on the host first.
 
@@ -25,25 +27,33 @@ Tip for Windows: ensure Docker Desktop has WSL2 integration enabled and that `nv
 
 2) Clone this devcontainer repo
 ```bash
-git clone --recursive https://github.com/AlexChesser/xformers-devcontainer.git
-cd xformers-devcontainer
+git clone https://github.com/AlexChesser/xformers-devcontainer.git
 ```
 
 3) Point the devcontainer at your fork
-- Create or edit `.devcontainer/devcontainer.local.json` and set your fork URL:
+- Edit `.devcontainer/devcontainer.local.json` and set your fork URL. Replace `<my-github-username>` with the github username of your fork (eg: `https://github.com/alexchesser/xformers.git`)
+
+- Optionally, update the `TORCH_CUDA_ARCH_LIST` with the string representing your GPU's architecture. See below for a non-exhaustive list, or you can look in the xformers [setup.py](https://github.com/facebookresearch/xformers/blob/main/setup.py#L179-L186) file for some hints) 
 
 ```json
 {
-  "build": {
-    "args": {
-      "XFORMERS_FORK_URL": "https://github.com/<your-github-username>/xformers.git"
+    "name": "xFormers DevContainer",
+    "build": {
+      "dockerfile": "Dockerfile",
+      "args": {
+        "XFORMERS_FORK_URL": "https://github.com/<my-github-username>/xformers.git",
+        "TORCH_CUDA_ARCH_LIST": "12.0"
+      }
+    },
+    "remoteEnv": {
+      "XFORMERS_FORK_URL": "https://github.com/<my-github-username>/xformers.git"
     }
   }
-}
 ```
 
 4) Open in Dev Container
-- Open this folder in VS Code, then choose “Reopen in Container”.
+- Open this folder in VS Code, then choose “Reopen in Container”. 
+- Note that this step will run a one time `post-create.sh` shell script where the wait time is expected to be around 30 minutes.  Subsequent re-opens will not incur this cost unless you recreate the container.  It is the nature of devcontainers that says you can't get aroud this bit (I've tried, I only made it slower!).
 
 5) Validate
 ```bash
@@ -53,7 +63,7 @@ python -c "import torch; print('CUDA:', torch.cuda.is_available(), torch.cuda.ge
 python3 attention_test.py  # Expect shape torch.Size([2, 4, 8]) and device 'cuda:0'
 ```
 
-You’re now inside a GPU-ready, prebuilt `xformers` dev environment. Most contributors will never need to run the heavy builder images locally.
+You’re now inside a GPU-ready `xformers` dev environment.
 
 ## Configuration
 
@@ -66,13 +76,18 @@ Example `.devcontainer/devcontainer.local.json` with architecture override:
 
 ```json
 {
-  "build": {
-    "args": {
-      "XFORMERS_FORK_URL": "https://github.com/<your-github-username>/xformers.git",
-      "TORCH_CUDA_ARCH_LIST": "8.9"
+    "name": "xFormers DevContainer",
+    "build": {
+      "dockerfile": "Dockerfile",
+      "args": {
+        "XFORMERS_FORK_URL": "https://github.com/<my-github-username>/xformers.git",
+        "TORCH_CUDA_ARCH_LIST": "12.0"
+      }
+    },
+    "remoteEnv": {
+      "XFORMERS_FORK_URL": "https://github.com/<my-github-username>/xformers.git"
     }
   }
-}
 ```
 
 Supported architecture values (non-exhaustive):
@@ -102,43 +117,14 @@ python -c "import xformers, torch; print('xformers ok; CUDA:', torch.cuda.is_ava
 
 ## How it works (short)
 
-- Multi-stage builder images pre-download CUDA/PyTorch wheels and build an `xformers` wheel.
-- The final devcontainer image copies those artifacts and installs from local wheel caches for speed and determinism.
-- On first run, your fork is cloned and installed in editable mode for fast iteration.
+- Dockerfile: `nvidia/cuda:12.8.0-devel-ubuntu22.04`, sets `TORCH_CUDA_ARCH_LIST` (default `12.0`) and `FORCE_CUDA=1`, installs Python toolchain and `torch/torchvision/torchaudio/triton`.
+- Post-create: clones `XFORMERS_FORK_URL` with submodules and runs a single editable install (`pip install -e`).
 
 For the full design, see `/.devcontext/research/02-architectural-research.md`.
 
-## Troubleshooting
+## Expected build time
 
-- GPU not visible in container
-  - Ensure Docker is configured with the NVIDIA Container Toolkit and that `nvidia-smi` works on the host.
-  - Confirm your devcontainer has `--gpus all` run args (set in `.devcontainer/devcontainer.json`).
-
-- Install hits the network unexpectedly
-  - The image is intended to install from local wheel caches via `--find-links`. If you see network fetches, cache layers may be missing; reopen to rebuild or update the base image.
-
-- Git safe.directory warnings
-  - The post-create step marks repositories as safe. If needed, re-run `.devcontainer/post-create.sh` inside the container.
-
-- Slow builds
-  - Verify remote cache usage is configured (e.g., `cacheFrom: ["alexchesser/xformers-devcontainer:latest"]`). Ensure Buildx is enabled.
-
-## Benchmarks
-
-See `benchmarking/benchmarking-plan.md` and the scripts in `benchmarking/` for end-to-end startup timing across baseline and cached scenarios.
-
-## Roadmap / future enhancements
-
-- Automated nightly builds to keep cached images fresh. Example command used by CI:
-
-```bash
-docker buildx build \
-  --cache-from=alexchesser/xformers-devcontainer:latest \
-  --tag alexchesser/xformers-devcontainer:latest \
-  -f .devcontainer/Dockerfile .
-```
-
-- Published variants per `TORCH_CUDA_ARCH_LIST` to cover a range of GPU architectures.
+Based on recent benchmarking of the baseline flow, end-to-end first setup typically completes in about 27 minutes on a modern workstation. Subsequent opens are faster since only the editable workspace is refreshed.
 
 ## Vision
 

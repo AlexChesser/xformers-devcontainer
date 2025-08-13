@@ -4,27 +4,14 @@
     "dockerfile": "Dockerfile",
     "args": {
       "BUILDKIT_INLINE_CACHE": "1",
-      // SET THIS value to the *FIRST* install of xformers. The intention here is to 
-      //   ensure that the underlying dependencies across the submodules are 
-      //   appropriately installed. Assuming your fork hasn't deviated too much,
-      //   this could save you 20 to 30  minutes when it comes time to launch the 
-      //   second install
-      "XFORMERS_FIRST_BUILD_URL": "https://github.com/facebookresearch/xformers.git",
       "XFORMERS_FORK_URL": "https://github.com/<my-github-username>/xformers.git",
       "TORCH_CUDA_ARCH_LIST": "12.0"
     },
-    // tell Docker to use this remote image as a build cache.
-    // effectively, the layers of your docker container will be unchanged from 
-    // the one I built and pushed here, so you'll be able to download all the 
-    // precompiled stuff all zippy-skippy
     "cacheFrom": ["alexchesser/xformers-devcontainer:latest"]
   },
   "remoteEnv": {
-    // this is the build that is unavoidable on  your local machine.
-    // xformers needs to be installed on your devcontainer with a `-e` parameter to
-    // enable updates to be recompiled as you make them.
     // if you're planning on contributing, this should be updated to your FORK   
-    "XFORMERS_FORK_URL": "https://github.com/alexchesser/xformers.git"
+    "XFORMERS_FORK_URL": "https://github.com/<my-github-username>/xformers.git"
   },
   // The 'docker-in-docker' feature ensures that the build environment has access
   // to the GPU. This is necessary for the xformers compilation to succeed.
